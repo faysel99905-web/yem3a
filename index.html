@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>يمعة - Yem3a Quiz Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="modal">
+        <div class="modal-content">
+            <h2>تسجيل دخول الإدارة</h2>
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label for="adminUsername">اسم المستخدم:</label>
+                    <input type="text" id="adminUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">كلمة المرور:</label>
+                    <input type="password" id="adminPassword" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">دخول</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeAdminLogin()">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Login Modal -->
+    <div id="userLoginModal" class="modal">
+        <div class="modal-content">
+            <div class="login-tabs">
+                <button class="tab-btn active" onclick="showLoginTab('login')">تسجيل الدخول</button>
+                <button class="tab-btn" onclick="showLoginTab('register')">إنشاء حساب</button>
+            </div>
+            
+            <!-- Login Tab -->
+            <div id="loginTab" class="login-tab active">
+                <h2>تسجيل الدخول</h2>
+                <form id="userLoginForm">
+                    <div class="form-group">
+                        <label for="loginUsername">اسم المستخدم:</label>
+                        <input type="text" id="loginUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">كلمة المرور:</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">دخول</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeUserLogin()">إلغاء</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Register Tab -->
+            <div id="registerTab" class="login-tab">
+                <h2>إنشاء حساب جديد</h2>
+                <form id="userRegisterForm">
+                    <div class="form-group">
+                        <label for="registerUsername">اسم المستخدم:</label>
+                        <input type="text" id="registerUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">البريد الإلكتروني:</label>
+                        <input type="email" id="registerEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">كلمة المرور:</label>
+                        <input type="password" id="registerPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">تأكيد كلمة المرور:</label>
+                        <input type="password" id="confirmPassword" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">إنشاء الحساب</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeUserLogin()">إلغاء</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Dashboard -->
+    <div id="userDashboard" class="user-dashboard hidden">
+        <div class="dashboard-header">
+            <div class="user-info">
+                <h2>مرحباً، <span id="currentUserName">المستخدم</span>!</h2>
+                <p>نقاطك الإجمالية: <span id="totalUserScore">0</span></p>
+            </div>
+            <div class="dashboard-actions">
+                <button class="btn btn-primary" onclick="startNewGame()">لعبة جديدة</button>
+                <button class="btn btn-secondary" onclick="logout()">تسجيل الخروج</button>
+            </div>
+        </div>
+        
+        <div class="dashboard-tabs">
+            <button class="tab-btn active" onclick="showDashboardTab('stats')">الإحصائيات</button>
+            <button class="tab-btn" onclick="showDashboardTab('history')">تاريخ الألعاب</button>
+            <button class="tab-btn" onclick="showDashboardTab('profile')">الملف الشخصي</button>
+        </div>
+
+        <!-- Stats Tab -->
+        <div id="statsTab" class="dashboard-tab active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>إجمالي الألعاب</h3>
+                    <p id="totalGamesPlayed">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>أعلى نتيجة</h3>
+                    <p id="highestScore">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>متوسط النقاط</h3>
+                    <p id="averageScore">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>نسبة النجاح</h3>
+                    <p id="successRate">0%</p>
+                </div>
+            </div>
+            
+            <div class="category-stats">
+                <h3>إحصائيات الفئات</h3>
+                <div id="categoryStatsContainer"></div>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="historyTab" class="dashboard-tab">
+            <h3>تاريخ الألعاب</h3>
+            <div id="gameHistoryContainer" class="history-container"></div>
+        </div>
+
+        <!-- Profile Tab -->
+        <div id="profileTab" class="dashboard-tab">
+            <div class="profile-section">
+                <h3>معلومات الحساب</h3>
+                <div class="profile-info">
+                    <p><strong>اسم المستخدم:</strong> <span id="profileUsername"></span></p>
+                    <p><strong>البريد الإلكتروني:</strong> <span id="profileEmail"></span></p>
+                    <p><strong>تاريخ التسجيل:</strong> <span id="profileJoinDate"></span></p>
+                </div>
+            </div>
+            
+            <div class="profile-section">
+                <h3>تغيير كلمة المرور</h3>
+                <form id="changePasswordForm">
+                    <div class="form-group">
+                        <label for="currentPassword">كلمة المرور الحالية:</label>
+                        <input type="password" id="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">كلمة المرور الجديدة:</label>
+                        <input type="password" id="newPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmNewPassword">تأكيد كلمة المرور الجديدة:</label>
+                        <input type="password" id="confirmNewPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">تغيير كلمة المرور</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="admin-panel hidden">
+        <div class="admin-header">
+            <h2>لوحة الإدارة</h2>
+            <button class="btn btn-secondary" onclick="exitAdmin()">خروج</button>
+        </div>
+        
+        <div class="admin-tabs">
+            <button class="tab-btn active" onclick="showAdminTab('categories')">الفئات</button>
+            <button class="tab-btn" onclick="showAdminTab('questions')">الأسئلة</button>
+            <button class="tab-btn" onclick="showAdminTab('users')">المستخدمين</button>
+            <button class="tab-btn" onclick="showAdminTab('data')">البيانات</button>
+        </div>
+
+        <!-- Categories Tab -->
+        <div id="categoriesTab" class="admin-tab active">
+            <div class="admin-section">
+                <h3>إضافة فئة جديدة</h3>
+                <form id="addCategoryForm">
+                    <div class="form-group">
+                        <label for="categoryName">اسم الفئة:</label>
+                        <input type="text" id="categoryName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryDescription">الوصف (اختياري):</label>
+                        <textarea id="categoryDescription"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">إضافة الفئة</button>
+                </form>
+            </div>
+            
+            <div class="admin-section">
+                <h3>الفئات الموجودة</h3>
+                <div id="categoriesList" class="list-container"></div>
+            </div>
+        </div>
+
+        <!-- Questions Tab -->
+        <div id="questionsTab" class="admin-tab">
+            <div class="admin-section">
+                <h3>إضافة سؤال جديد</h3>
+                <form id="addQuestionForm">
+                    <div class="form-group">
+                        <label for="questionCategory">الفئة:</label>
+                        <select id="questionCategory" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="questionDifficulty">مستوى الصعوبة:</label>
+                        <select id="questionDifficulty" required>
+                            <option value="200">سهل - 200 نقطة</option>
+                            <option value="400">متوسط - 400 نقطة</option>
+                            <option value="600">صعب - 600 نقطة</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="questionText">نص السؤال:</label>
+                        <textarea id="questionText" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="questionAnswer">الإجابة الصحيحة:</label>
+                        <textarea id="questionAnswer" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">إضافة السؤال</button>
+                </form>
+            </div>
+            
+            <div class="admin-section">
+                <h3>استيراد أسئلة من ملف Excel</h3>
+                <div class="import-section">
+                    <p><strong>تنسيق الملف المطلوب:</strong></p>
+                    <p>يجب أن يحتوي الملف على الأعمدة التالية في الصف الأول:</p>
+                    <ul style="margin: 10px 0; padding-right: 20px;">
+                        <li><strong>question:</strong> نص السؤال</li>
+                        <li><strong>category:</strong> اسم الفئة</li>
+                        <li><strong>answer:</strong> الإجابة الصحيحة</li>
+                        <li><strong>level:</strong> مستوى الصعوبة (200, 400, أو 600)</li>
+                    </ul>
+                    <div class="form-group">
+                        <input type="file" id="excelFile" accept=".csv,.xlsx,.xls" style="display: none;" onchange="handleExcelImport(event)">
+                        <button type="button" class="btn btn-info" onclick="document.getElementById('excelFile').click()">اختيار ملف Excel</button>
+                        <span id="excelFileName" style="margin-right: 10px; color: #666;"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="admin-section">
+                <h3>الأسئلة الموجودة</h3>
+                <div class="filter-section">
+                    <label for="filterCategory">تصفية حسب الفئة:</label>
+                    <select id="filterCategory" onchange="filterQuestions()">
+                        <option value="">جميع الفئات</option>
+                    </select>
+                </div>
+                <div id="questionsList" class="list-container"></div>
+            </div>
+        </div>
+
+        <!-- Users Management Tab -->
+        <div id="usersTab" class="admin-tab">
+            <div class="admin-section">
+                <h3>إدارة المستخدمين</h3>
+                <div class="users-controls">
+                    <div class="search-section">
+                        <label for="userSearch">البحث عن مستخدم:</label>
+                        <input type="text" id="userSearch" placeholder="اسم المستخدم أو البريد الإلكتروني" onkeyup="filterUsers()">
+                    </div>
+                </div>
+                <div id="usersList" class="list-container"></div>
+            </div>
+        </div>
+
+        <!-- Data Management Tab -->
+        <div id="dataTab" class="admin-tab">
+            <div class="admin-section">
+                <h3>إدارة البيانات</h3>
+                <div class="data-actions">
+                    <button class="btn btn-warning" onclick="exportData()">تصدير البيانات</button>
+                    <button class="btn btn-info" onclick="importData()">استيراد البيانات</button>
+                    <button class="btn btn-danger" onclick="resetAllData()">مسح جميع البيانات</button>
+                </div>
+                <div class="data-stats">
+                    <p>عدد الفئات: <span id="categoriesCount">0</span></p>
+                    <p>عدد الأسئلة: <span id="questionsCount">0</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Game Container -->
+    <div id="gameContainer">
+        <!-- Header -->
+        <header class="game-header">
+            <h1>يمعة</h1>
+            <div class="header-actions">
+                <div id="userAuthButtons" class="auth-buttons">
+                    <button class="btn btn-primary" onclick="showUserLogin()">تسجيل الدخول</button>
+                </div>
+                <div id="userProfileButtons" class="profile-buttons hidden">
+                    <span class="welcome-text">مرحباً، <span id="headerUserName">المستخدم</span></span>
+                    <button class="btn btn-secondary" onclick="showUserDashboard()">لوحة التحكم</button>
+                    <button class="btn btn-secondary" onclick="logout()">خروج</button>
+                </div>
+                <button class="btn btn-secondary admin-btn" onclick="showAdminLogin()">الإدارة</button>
+            </div>
+        </header>
+
+        <!-- Game Mode Selection -->
+        <div id="gameModeScreen" class="game-screen">
+            <h2>اختر وضع اللعب</h2>
+            <div class="mode-selection">
+                <button class="mode-btn" onclick="startGame('solo')">
+                    <h3>اللعب الفردي</h3>
+                    <p>اجب على الأسئلة بنفسك</p>
+                </button>
+                <button class="mode-btn" onclick="startGame('bot')">
+                    <h3>ضد البوت</h3>
+                    <p>تنافس مع الذكاء الاصطناعي</p>
+                </button>
+            </div>
+        </div>
+
+        <!-- Category Selection -->
+        <div id="categorySelectionScreen" class="game-screen hidden">
+            <h2>اختر فئة واحدة للعب</h2>
+            <div id="categoriesContainer" class="categories-grid"></div>
+            <div class="selection-info">
+                <p>الفئة المختارة: <span id="selectedCount">0</span>/1</p>
+            </div>
+            <button id="startQuizBtn" class="btn btn-primary" disabled onclick="startQuiz()">بدء المسابقة</button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quizScreen" class="game-screen hidden">
+            <div class="quiz-header">
+                <div class="quiz-info">
+                    <h3 id="currentCategory">الفئة</h3>
+                    <p>السؤال <span id="questionNumber">1</span> من <span id="totalQuestions">6</span></p>
+                </div>
+                <div class="quiz-timer">
+                    <div class="timer-display">
+                        <span id="timerDisplay">2:00</span>
+                    </div>
+                    <div class="timer-label">الوقت المتبقي</div>
+                </div>
+                <div class="quiz-score">
+                    <p>النقاط: <span id="playerScore">0</span></p>
+                    <p id="botScoreDisplay" class="hidden">البوت: <span id="botScore">0</span></p>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-header">
+                    <h2 id="questionText">نص السؤال</h2>
+                    <div class="question-difficulty">
+                        <span id="questionPoints">200 نقطة</span>
+                    </div>
+                </div>
+                <div id="answerContainer" class="answer-container hidden">
+                    <h3>الإجابة:</h3>
+                    <p id="questionAnswer">الإجابة الصحيحة</p>
+                </div>
+            </div>
+            
+            <div class="quiz-actions">
+                <button id="showAnswerBtn" class="btn btn-primary" onclick="showAnswer()">إظهار الإجابة</button>
+                <button id="correctBtn" class="btn btn-success hidden" onclick="markCorrect()">صحيح</button>
+                <button id="incorrectBtn" class="btn btn-danger hidden" onclick="markIncorrect()">خطأ</button>
+                <button id="nextQuestionBtn" class="btn btn-primary hidden" onclick="nextQuestion()">السؤال التالي</button>
+                <button id="finishQuizBtn" class="btn btn-success hidden" onclick="finishQuiz()">إنهاء المسابقة</button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="game-screen hidden">
+            <h2>نتائج المسابقة</h2>
+            <div class="results-container">
+                <div class="score-display">
+                    <h3>نقاطك: <span id="finalPlayerScore">0</span></h3>
+                    <h3 id="finalBotScoreDisplay" class="hidden">نقاط البوت: <span id="finalBotScore">0</span></h3>
+                </div>
+                <div class="results-message">
+                    <p id="resultsMessage">ممتاز!</p>
+                </div>
+                <div class="category-breakdown">
+                    <h4>تفاصيل النتائج:</h4>
+                    <div id="categoryBreakdown"></div>
+                </div>
+            </div>
+            <div class="results-actions">
+                <button class="btn btn-primary" onclick="playAgain()">لعب مرة أخرى</button>
+                <button class="btn btn-secondary" onclick="backToMenu()">العودة للقائمة</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file input for data import -->
+    <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleFileImport(event)">
+
+    <!-- Professional Notification System -->
+    <div id="notificationContainer" class="notification-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
