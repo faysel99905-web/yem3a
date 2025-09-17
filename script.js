@@ -1236,6 +1236,9 @@ function markCorrect() {
     gameState.playerScore += question.difficulty;
     document.getElementById('playerScore').textContent = gameState.playerScore;
     
+    // Show success message
+    showNotification('success', 'إجابة صحيحة!', 'صحتيننن 🎉', 3000);
+    
     // Bot logic
     if (gameState.gameMode === 'bot') {
         const botCorrect = Math.random() < 0.7; // 70% chance bot gets it right
@@ -1254,6 +1257,9 @@ function markIncorrect() {
     const question = questions[gameState.currentQuestionIndex];
     
     gameState.totalQuestionsAnswered++;
+    
+    // Show error message
+    showNotification('error', 'إجابة خاطئة', 'تكبر و تنسى 😅', 3000);
     
     // Bot logic
     if (gameState.gameMode === 'bot') {
