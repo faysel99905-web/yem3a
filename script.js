@@ -1167,6 +1167,11 @@ function loadQuestion() {
     
     const question = questions[gameState.currentQuestionIndex];
     
+    // Debug: Log question data
+    console.log('Current question:', question);
+    console.log('Question text:', question.text);
+    console.log('Question answer:', question.answer);
+    
     // Update header
     document.getElementById('currentCategory').textContent = category.name;
     document.getElementById('questionNumber').textContent = gameState.currentQuestionIndex + 1;
@@ -1184,9 +1189,23 @@ function loadQuestion() {
     }
     
     // Load question
-    document.getElementById('questionText').textContent = question.text;
-    document.getElementById('questionPoints').textContent = question.difficulty + ' نقطة';
-    document.getElementById('questionAnswer').textContent = question.answer;
+    const questionTextElement = document.getElementById('quizQuestionText');
+    const questionPointsElement = document.getElementById('quizQuestionPoints');
+    const questionAnswerElement = document.getElementById('quizQuestionAnswer');
+    
+    console.log('Question text element:', questionTextElement);
+    console.log('Question points element:', questionPointsElement);
+    console.log('Question answer element:', questionAnswerElement);
+    
+    if (questionTextElement) {
+        questionTextElement.textContent = question.text;
+    }
+    if (questionPointsElement) {
+        questionPointsElement.textContent = question.difficulty + ' نقطة';
+    }
+    if (questionAnswerElement) {
+        questionAnswerElement.textContent = question.answer;
+    }
     
     // Hide answer container
     document.getElementById('answerContainer').classList.add('hidden');
